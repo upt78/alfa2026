@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .                      # собрать образ из Dockerfile в текущей папке
+    ports:
+      - "8000:8000"               # порт компьютера : порт контейнера
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://credit:credit@db:5432/credit
+    command: sh -c "python seed.py && uvicorn main:app --host 0.0.0.0 --port 8000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16            # готовый официальный образ, не собираем сами
+    environment:
+      POSTGRES_USER: credit
+      POSTGRES_PASSWORD: credit
+      POSTGRES_DB: credit
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # данные переживают перезапуск контейнера
+
+volumes:
+  pgdata:
