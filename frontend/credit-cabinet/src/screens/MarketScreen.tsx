@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -30,17 +29,33 @@ const FILTERS: { id: Filter; label: string }[] = [
 
 export function MarketScreen({ products, onApply, onGoAssistant }: Props) {
   const [filter, setFilter] = useState<Filter>('all')
-  const [maxAmount, setMaxAmount] = useState(30_000_000)
+  const [requestedAmount, setRequestedAmount] = useState(1_000_000)
   const [compare, setCompare] = useState<string[]>([])
   const [compareOpen, setCompareOpen] = useState(false)
 
   const list = useMemo(() => {
-    let l = products.filter((p) => p.amountFrom <= maxAmount)
-    if (filter === 'preapproved') l = l.filter((p) => p.preapproved)
-    if (filter === 'no-collateral') l = l.filter((p) => p.tags.some((t) => t === 'Без залога'))
-    if (filter === 'fast') l = l.filter((p) => p.tags.some((t) => t.includes('Решение')))
-    return [...l].sort((a, b) => Number(b.preapproved ?? false) - Number(a.preapproved ?? false) || b.approval - a.approval)
-  }, [filter, maxAmount, products])
+    let filtered = products.filter((p) => p.amountFrom <= requestedAmount && p.amountTo >= requestedAmount)
+    if (filter === 'preapproved') filtered = filtered.filter((p) => p.preapproved)
+    if (filter === 'no-collateral') filtered = filtered.filter((p) => p.tags.some((t) => t === 'Без залога'))
+    if (filter === 'fast') filtered = filtered.filter((p) => p.tags.some((t) => t.toLowerCase().includes('решение')))
+    return [...filtered].sort((a, b) => Number(b.preapproved ?? false) - Number(a.preapproved ?? false) || b.approval - a.approval)
+  }, [filter, requestedAmount, products])
+
+  const changeFilter = (value: Filter) => {
+    setFilter(value)
+    setCompare([])
+  }
+
+  const changeAmount = (value: number) => {
+    setRequestedAmount(value)
+    setCompare([])
+  }
+
+  const resetFilters = () => {
+    setFilter('all')
+    setRequestedAmount(1_000_000)
+    setCompare([])
+  }
 
   const toggleCompare = (id: string) =>
     setCompare((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : prev.length < 3 ? [...prev, id] : prev)
@@ -51,45 +66,49 @@ export function MarketScreen({ products, onApply, onGoAssistant }: Props) {
     <div className="h-full flex flex-col">
       <div className="px-4 pt-4 pb-2 space-y-3 border-b bg-card">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">Биржа кредитов</h2>
+          <h2 className="text-lg font-bold">Кредиты для бизнеса</h2>
           <Button variant="outline" size="sm" onClick={onGoAssistant}>
             <Bot className="h-4 w-4 mr-1.5" /> Подобрать мне
           </Button>
         </div>
         <div className="flex gap-1.5 overflow-x-auto pb-1">
           {FILTERS.map((f) => (
-            <Badge
+            <Button
               key={f.id}
+              type="button"
+              size="sm"
               variant={filter === f.id ? 'default' : 'outline'}
-              className="cursor-pointer whitespace-nowrap font-normal"
-              onClick={() => setFilter(f.id)}
+              aria-pressed={filter === f.id}
+              className="whitespace-nowrap font-normal"
+              onClick={() => changeFilter(f.id)}
             >
               {f.label}
-            </Badge>
+            </Button>
           ))}
         </div>
         <div>
           <div className="flex justify-between text-xs mb-1">
             <span className="text-muted-foreground">Нужная сумма</span>
-            <span className="font-semibold">до {maxAmount / 1_000_000} млн ₽</span>
+            <span className="font-semibold">{fmt(requestedAmount)}</span>
           </div>
           <Slider
-            value={[maxAmount]}
-            onValueChange={([v]) => setMaxAmount(v)}
-            min={500_000}
-            max={100_000_000}
-            step={500_000}
+            aria-label="Нужная сумма кредита"
+            value={[requestedAmount]}
+            onValueChange={([value]) => changeAmount(value)}
+            min={50_000}
+            max={50_000_000}
+            step={50_000}
           />
+          <div className="flex justify-between text-[10px] text-muted-foreground mt-1"><span>50 тыс ₽</span><span>50 млн ₽</span></div>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {filter !== 'all' && (
-          <p className="text-xs text-muted-foreground">Найдено предложений: {list.length}</p>
-        )}
+        <p className="text-xs text-muted-foreground">Найдено предложений: {list.length} · для суммы {fmt(requestedAmount)}</p>
+        {list.length === 0 && <div className="rounded-lg border p-4 text-center space-y-3"><p className="text-sm text-muted-foreground">Нет продуктов с такими параметрами. Измените сумму или сбросьте фильтры.</p><Button variant="outline" size="sm" onClick={resetFilters}>Сбросить фильтры</Button></div>}
         {list.map((p) => (
           <div key={p.id} className="relative">
-            <ProductCard product={p} onApply={onApply} selectedAmount={Math.min(Math.max(maxAmount / 3, p.amountFrom), p.amountTo)} />
+            <ProductCard product={p} onApply={onApply} selectedAmount={requestedAmount} />
             <button
               onClick={() => toggleCompare(p.id)}
               className={`absolute top-3 right-3 text-xs underline underline-offset-2 ${
@@ -143,7 +162,7 @@ export function MarketScreen({ products, onApply, onGoAssistant }: Props) {
                   { label: 'Срок', render: (p: Product) => `${p.termFrom}–${p.termTo} мес` },
                   {
                     label: 'Платёж¹',
-                    render: (p: Product) => fmt(monthlyPay(Math.min(Math.max(maxAmount / 3, p.amountFrom), p.amountTo), p.rateFrom + 1.5, Math.min(12, p.termTo)) ),
+                    render: (p: Product) => fmt(monthlyPay(requestedAmount, p.rateFrom + 1.5, Math.min(12, p.termTo)) ),
                   },
                   { label: 'Одобрение', render: (p: Product) => `~${p.approval}%` },
                   { label: 'Залог', render: (p: Product) => (p.tags.some((t) => t === 'Без залога' || t === 'Без документов' || t === 'Без справок') ? 'не нужен' : 'нужен') },
@@ -159,7 +178,7 @@ export function MarketScreen({ products, onApply, onGoAssistant }: Props) {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-muted-foreground">¹ Платёж на 1 млн ₽ на 12 мес, ставка = минимальная + 1,5 п.п.</p>
+          <p className="text-xs text-muted-foreground">¹ Платёж на выбранную сумму {fmt(requestedAmount)} на 12 мес, ставка = минимальная + 1,5 п.п.</p>
           <div className="flex gap-2 justify-end">
             {compareProducts.map((p) => (
               <Button key={p.id} size="sm" onClick={() => { setCompareOpen(false); onApply(p) }}>
