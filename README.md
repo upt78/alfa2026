@@ -31,6 +31,32 @@ APP_PORT=8080 docker compose up --build
 
 Остановка: `Ctrl+C`, затем `docker compose down`. Полный сброс **с удалением синтетических заявок**: `docker compose down -v`.
 
+## Быстрый запуск на Windows 10/11
+
+Требуются **Docker Desktop для Windows** и **Git for Windows**. Во время установки Docker Desktop оставьте включённой опцию использования **WSL 2**, перезагрузите компьютер, если установщик этого попросит, затем запустите Docker Desktop и дождитесь готовности Docker Engine.
+
+1. Установите [Docker Desktop](https://www.docker.com/products/docker-desktop/) и [Git for Windows](https://git-scm.com/download/win).
+2. Откройте **PowerShell** в папке, куда хотите скачать проект.
+3. Выполните по очереди:
+
+```powershell
+git clone https://github.com/upt78/alfa2026.git
+cd alfa2026
+docker compose up --build
+```
+
+При первом запуске разрешите Docker Desktop доступ к сети, если Windows покажет системный запрос. Дождитесь сообщения о запуске приложения, затем откройте http://localhost:8001. Swagger UI доступен по адресу http://localhost:8001/docs. Отдельно устанавливать Node.js, Python или PostgreSQL не нужно.
+
+Если порт `8001` уже занят, запустите проект на другом порту, например `8080`:
+
+```powershell
+$env:APP_PORT="8080"; docker compose up --build
+```
+
+Тогда интерфейс будет доступен по адресу http://localhost:8080. Настройка действует только в текущем окне PowerShell; чтобы вернуть порт по умолчанию, выполните `Remove-Item Env:APP_PORT`.
+
+Остановка: нажмите `Ctrl+C` в окне PowerShell, затем выполните `docker compose down`. Полный сброс **с удалением синтетических заявок**: `docker compose down -v`.
+
 ## Сценарий проверки
 
 1. На экране «Профиль» нажмите «Продолжить», введите любой четырёхзначный локальный код.
