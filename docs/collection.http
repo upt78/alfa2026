@@ -1,0 +1,53 @@
+@base = http://localhost:8001
+@inn = 7701234567
+@applicationId = 1
+
+### Health
+GET {{base}}/health
+
+### Каталог
+GET {{base}}/products
+
+### Персональные рекомендации
+POST {{base}}/recommendations
+Content-Type: application/json
+
+{
+  "company_name": "ООО Ромашка",
+  "inn": "{{inn}}",
+  "revenue": 24000000,
+  "age_years": 7,
+  "amount": 2000000,
+  "term_months": 24,
+  "purpose": "Пополнение оборотных средств"
+}
+
+### Создание заявки — подставьте id продукта из каталога
+POST {{base}}/applications
+Content-Type: application/json
+
+{
+  "company_name": "ООО Ромашка",
+  "inn": "{{inn}}",
+  "revenue": 24000000,
+  "age_years": 7,
+  "product_id": 1,
+  "amount": 2000000,
+  "term_months": 24,
+  "purpose": "Пополнение оборотных средств"
+}
+
+### Список заявок компании
+GET {{base}}/applications?inn={{inn}}
+
+### Карточка заявки и история
+GET {{base}}/applications/{{applicationId}}
+
+### Ответ на уточнение — только в статусе clarification
+POST {{base}}/applications/{{applicationId}}/clarify
+Content-Type: application/json
+
+{"comment": "Подтверждаю финансовые показатели за последние 12 месяцев"}
+
+### Подписание — только в статусе signing
+POST {{base}}/applications/{{applicationId}}/sign

@@ -1,22 +1,35 @@
-services:
-  app:
-    build: .                      # собрать образ из Dockerfile в текущей папке
-    ports:
-      - "8000:8000"               # порт компьютера : порт контейнера
-    environment:
-      - DATABASE_URL=postgresql+psycopg2://credit:credit@db:5432/credit
-    command: sh -c "python seed.py && uvicorn main:app --host 0.0.0.0 --port 8000"
-    depends_on:
-      - db
+name: alfa-credit
 
+services:
   db:
-    image: postgres:16            # готовый официальный образ, не собираем сами
+    image: postgres:16-alpine
     environment:
       POSTGRES_USER: credit
       POSTGRES_PASSWORD: credit
       POSTGRES_DB: credit
     volumes:
-      - pgdata:/var/lib/postgresql/data   # данные переживают перезапуск контейнера
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U credit -d credit"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-8001}:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://credit:credit@db:5432/credit
+      SEED_PRODUCTS: "true"
+      ENABLE_WORKER: "true"
+      WORKER_INTERVAL_SECONDS: "2"
+    depends_on:
+      db:
+        condition: service_healthy
+    init: true
+    restart: unless-stopped
 
 volumes:
   pgdata:

@@ -46,9 +46,12 @@ export function ProductCard({ product: p, onApply, compact, selectedAmount }: Pr
       </div>
 
       <div className="flex items-center gap-2">
-        <Progress value={p.approval} className="h-1.5 flex-1" />
-        <span className="text-xs text-muted-foreground whitespace-nowrap">одобрение ~{p.approval}%</span>
+        <Progress value={p.matchScore ?? p.approval} className="h-1.5 flex-1" />
+        <span className="text-xs text-muted-foreground whitespace-nowrap">
+          {p.matchScore !== undefined ? `совпадение ${p.matchScore}%` : `базовый рейтинг ${p.approval}%`}
+        </span>
       </div>
+      {p.reason && <p className="text-xs text-emerald-700 leading-relaxed">{p.reason}</p>}
 
       {!compact && (
         <>

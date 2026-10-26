@@ -1,7 +1,7 @@
 {
-  "name": "my-app",
+  "name": "alfa-credit-cabinet",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -77,5 +77,8 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
     "vite-plugin-singlefile": "^2.3.4"
+  },
+  "overrides": {
+    "postcss-selector-parser": "7.1.6"
   }
 }

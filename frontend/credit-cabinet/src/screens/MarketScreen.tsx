@@ -11,11 +11,12 @@ import {
 import { Slider } from '@/components/ui/slider'
 import { Bot, GitCompareArrows, X } from 'lucide-react'
 import { ProductCard } from '@/components/ProductCard'
-import { fmt, monthlyPay, PRODUCTS, type Product } from '@/lib/data'
+import { fmt, monthlyPay, type Product } from '@/lib/data'
 
 type Filter = 'all' | 'no-collateral' | 'fast' | 'preapproved'
 
 type Props = {
+  products: Product[]
   onApply: (p: Product) => void
   onGoAssistant: () => void
 }
@@ -27,27 +28,24 @@ const FILTERS: { id: Filter; label: string }[] = [
   { id: 'fast', label: 'Быстрое решение' },
 ]
 
-export function MarketScreen({ onApply, onGoAssistant }: Props) {
+export function MarketScreen({ products, onApply, onGoAssistant }: Props) {
   const [filter, setFilter] = useState<Filter>('all')
   const [maxAmount, setMaxAmount] = useState(30_000_000)
   const [compare, setCompare] = useState<string[]>([])
   const [compareOpen, setCompareOpen] = useState(false)
 
   const list = useMemo(() => {
-    let l = PRODUCTS.filter((p) => p.amountFrom <= maxAmount)
+    let l = products.filter((p) => p.amountFrom <= maxAmount)
     if (filter === 'preapproved') l = l.filter((p) => p.preapproved)
     if (filter === 'no-collateral') l = l.filter((p) => p.tags.some((t) => t === 'Без залога'))
     if (filter === 'fast') l = l.filter((p) => p.tags.some((t) => t.includes('Решение')))
-    // предодобренные первыми
     return [...l].sort((a, b) => Number(b.preapproved ?? false) - Number(a.preapproved ?? false) || b.approval - a.approval)
-  }, [filter, maxAmount])
+  }, [filter, maxAmount, products])
 
   const toggleCompare = (id: string) =>
-    setCompare((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : prev.length < 3 ? [...prev, id] : prev,
-    )
+    setCompare((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : prev.length < 3 ? [...prev, id] : prev)
 
-  const compareProducts = compare.map((id) => PRODUCTS.find((p) => p.id === id)!).filter(Boolean)
+  const compareProducts = compare.map((id) => products.find((p) => p.id === id)!).filter(Boolean)
 
   return (
     <div className="h-full flex flex-col">

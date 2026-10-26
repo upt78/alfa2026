@@ -1,7 +1,14 @@
+.git
 .venv
 venv
 __pycache__
 *.pyc
 credit.db
-.git
 .idea
+.DS_Store
+node_modules
+frontend/credit-cabinet/node_modules
+frontend/credit-cabinet/dist
+hackathon-requirements.pdf
+hackathon-requirements.txt
+.pytest_cache

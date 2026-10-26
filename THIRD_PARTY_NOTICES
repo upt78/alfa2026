@@ -1,0 +1,27 @@
+THIRD-PARTY COMPONENTS AND SIMULATED INTEGRATIONS
+
+Backend
+- FastAPI (MIT), Starlette (BSD-3-Clause), Pydantic (MIT), Uvicorn (BSD-3-Clause).
+- SQLAlchemy (MIT), psycopg2-binary (LGPL-3.0; binary dependencies have their own notices).
+- Python standard library (PSF-2.0).
+
+Frontend
+- React / React DOM (MIT), TypeScript (Apache-2.0), Vite (MIT).
+- Tailwind CSS (MIT), PostCSS (MIT), Autoprefixer (MIT).
+- Radix UI primitives and shadcn/ui-style components (MIT).
+- Lucide icons (ISC), Sonner (MIT), tailwind-merge (MIT), clsx (MIT).
+- Additional direct/transitive packages and exact versions: frontend/credit-cabinet/package.json and package-lock.json.
+
+Infrastructure and tests
+- PostgreSQL (PostgreSQL License), official postgres Docker image.
+- Node.js and Python official Docker images; image licenses/notices remain in their respective images.
+- pytest (MIT), HTTPX (BSD-3-Clause).
+
+Data, models and external services
+- No external datasets, paid APIs, proprietary models or LLMs are used.
+- Product names, rates, limits, scores, companies, phone numbers and applications are synthetic demo data, not real Alfa-Bank offers or credit decisions.
+- EGRUL/EGRIP, FNS-like registry lookup and credit bureau responses are deterministic local mocks in app/services.py.
+- Login confirmation, document confirmation, contract signing and money issuance are local simulations.
+- No SMS, email, messenger, payment or government-service calls are made.
+
+This file is a component overview, not a replacement for license texts distributed inside dependencies and container images.

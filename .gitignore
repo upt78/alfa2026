@@ -3,5 +3,13 @@ venv/
 __pycache__/
 *.pyc
 credit.db
+test-credit.db
 .idea/
 .DS_Store
+.pytest_cache/
+.coverage
+htmlcov/
+frontend/credit-cabinet/dist/
+frontend/credit-cabinet/node_modules/
+hackathon-requirements.pdf
+hackathon-requirements.txt

@@ -1,0 +1,489 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "\u0423\u043c\u043d\u044b\u0439 \u043a\u0440\u0435\u0434\u0438\u0442\u043d\u044b\u0439 \u043a\u0430\u0431\u0438\u043d\u0435\u0442 \u043f\u0440\u0435\u0434\u043f\u0440\u0438\u043d\u0438\u043c\u0430\u0442\u0435\u043b\u044f",
+        "description": "\u0421\u043a\u0432\u043e\u0437\u043d\u043e\u0439 \u043f\u0440\u043e\u0442\u043e\u0442\u0438\u043f \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u043f\u043e\u0434\u0431\u043e\u0440\u0430 \u0438 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0438 \u043a\u0440\u0435\u0434\u0438\u0442\u043d\u043e\u0439 \u0437\u0430\u044f\u0432\u043a\u0438 \u0434\u043b\u044f \u041c\u0421\u0411.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/health": {
+            "get": {
+                "tags": [
+                    "system"
+                ],
+                "summary": "Health",
+                "operationId": "health_health_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products": {
+            "get": {
+                "tags": [
+                    "catalog"
+                ],
+                "summary": "Get Products",
+                "operationId": "get_products_products_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/recommendations": {
+            "post": {
+                "tags": [
+                    "catalog"
+                ],
+                "summary": "Get Recommendations",
+                "operationId": "get_recommendations_recommendations_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecommendationRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/applications": {
+            "get": {
+                "tags": [
+                    "applications"
+                ],
+                "summary": "List Applications",
+                "operationId": "list_applications_applications_get",
+                "parameters": [
+                    {
+                        "name": "inn",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^\\d{10}$|^\\d{12}$",
+                            "title": "Inn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "applications"
+                ],
+                "summary": "Create Application",
+                "operationId": "create_application_applications_post",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ApplicationCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/applications/{application_id}": {
+            "get": {
+                "tags": [
+                    "applications"
+                ],
+                "summary": "Get Application",
+                "operationId": "get_application_applications__application_id__get",
+                "parameters": [
+                    {
+                        "name": "application_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Application Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/applications/{application_id}/sign": {
+            "post": {
+                "tags": [
+                    "applications"
+                ],
+                "summary": "Sign Application",
+                "operationId": "sign_application_applications__application_id__sign_post",
+                "parameters": [
+                    {
+                        "name": "application_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Application Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/applications/{application_id}/clarify": {
+            "post": {
+                "tags": [
+                    "applications"
+                ],
+                "summary": "Clarify Application",
+                "operationId": "clarify_application_applications__application_id__clarify_post",
+                "parameters": [
+                    {
+                        "name": "application_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Application Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClarificationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ApplicationCreate": {
+                "properties": {
+                    "company_name": {
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 2,
+                        "title": "Company Name"
+                    },
+                    "inn": {
+                        "type": "string",
+                        "pattern": "^\\d{10}$|^\\d{12}$",
+                        "title": "Inn",
+                        "description": "\u0418\u041d\u041d: 10 \u0446\u0438\u0444\u0440 \u0434\u043b\u044f \u041e\u041e\u041e, 12 \u0434\u043b\u044f \u0418\u041f"
+                    },
+                    "revenue": {
+                        "type": "number",
+                        "exclusiveMinimum": 0.0,
+                        "title": "Revenue",
+                        "description": "\u0413\u043e\u0434\u043e\u0432\u0430\u044f \u0432\u044b\u0440\u0443\u0447\u043a\u0430, \u0440\u0443\u0431."
+                    },
+                    "age_years": {
+                        "type": "integer",
+                        "maximum": 200.0,
+                        "minimum": 0.0,
+                        "title": "Age Years",
+                        "description": "\u0412\u043e\u0437\u0440\u0430\u0441\u0442 \u0431\u0438\u0437\u043d\u0435\u0441\u0430, \u043b\u0435\u0442"
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0.0,
+                        "title": "Product Id"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "maximum": 1000000000.0,
+                        "exclusiveMinimum": 0.0,
+                        "title": "Amount"
+                    },
+                    "term_months": {
+                        "type": "integer",
+                        "maximum": 120.0,
+                        "minimum": 1.0,
+                        "title": "Term Months"
+                    },
+                    "purpose": {
+                        "type": "string",
+                        "maxLength": 300,
+                        "minLength": 3,
+                        "title": "Purpose"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "company_name",
+                    "inn",
+                    "revenue",
+                    "age_years",
+                    "product_id",
+                    "amount",
+                    "term_months",
+                    "purpose"
+                ],
+                "title": "ApplicationCreate"
+            },
+            "ClarificationRequest": {
+                "properties": {
+                    "comment": {
+                        "type": "string",
+                        "maxLength": 2000,
+                        "minLength": 3,
+                        "title": "Comment"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "comment"
+                ],
+                "title": "ClarificationRequest"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "RecommendationRequest": {
+                "properties": {
+                    "company_name": {
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 2,
+                        "title": "Company Name"
+                    },
+                    "inn": {
+                        "type": "string",
+                        "pattern": "^\\d{10}$|^\\d{12}$",
+                        "title": "Inn",
+                        "description": "\u0418\u041d\u041d: 10 \u0446\u0438\u0444\u0440 \u0434\u043b\u044f \u041e\u041e\u041e, 12 \u0434\u043b\u044f \u0418\u041f"
+                    },
+                    "revenue": {
+                        "type": "number",
+                        "exclusiveMinimum": 0.0,
+                        "title": "Revenue",
+                        "description": "\u0413\u043e\u0434\u043e\u0432\u0430\u044f \u0432\u044b\u0440\u0443\u0447\u043a\u0430, \u0440\u0443\u0431."
+                    },
+                    "age_years": {
+                        "type": "integer",
+                        "maximum": 200.0,
+                        "minimum": 0.0,
+                        "title": "Age Years",
+                        "description": "\u0412\u043e\u0437\u0440\u0430\u0441\u0442 \u0431\u0438\u0437\u043d\u0435\u0441\u0430, \u043b\u0435\u0442"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "maximum": 1000000000.0,
+                        "exclusiveMinimum": 0.0,
+                        "title": "Amount"
+                    },
+                    "term_months": {
+                        "type": "integer",
+                        "maximum": 120.0,
+                        "minimum": 1.0,
+                        "title": "Term Months"
+                    },
+                    "purpose": {
+                        "type": "string",
+                        "maxLength": 300,
+                        "minLength": 3,
+                        "title": "Purpose"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "company_name",
+                    "inn",
+                    "revenue",
+                    "age_years",
+                    "amount",
+                    "term_months",
+                    "purpose"
+                ],
+                "title": "RecommendationRequest"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    },
+                    "input": {
+                        "title": "Input"
+                    },
+                    "ctx": {
+                        "type": "object",
+                        "title": "Context"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            }
+        }
+    }
+}
